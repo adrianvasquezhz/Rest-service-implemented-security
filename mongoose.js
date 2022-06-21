@@ -8,5 +8,4 @@ mongoose.connect(connectionString).then(() => {
 }).catch(err => {
   console.error(err)
 });
-
 module.exports = {a: 123, b: 456}

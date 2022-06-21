@@ -24,7 +24,7 @@ const express = require('express');
 const app = express();
 
 const cors = require('cors');
-const Notes = require('./models/Notes');
+const Note = require('./models/Note');
 
 const Sentry = require('@sentry/node');
 const Tracing = require("@sentry/tracing");
@@ -75,7 +75,8 @@ app.get('/test', (request, response) => {
 
    // response.json({'nice': true})
 
-   const doc = new Notes({
+   // una nueva instancia seria el documento (like registro)
+   const doc = new Note({
       content: 'Validating test',
       important: true,
       date: new Date(),
@@ -131,7 +132,7 @@ app.get('/test', (request, response) => {
 
 app.get('/notes', (request, response) => {
    // response.header('Access-Control-Allow-Origin', '*');
-   Notes.find({})
+   Note.find({})
       .then(res => {
          response.status(302).json(res.map(el => {
             clearTimeout(timeout)
@@ -149,7 +150,7 @@ app.get('/notes', (request, response) => {
 app.get('/notes/:id', (request, response, next) => {
    const { id } = request.params;
 
-   Notes.findById(id)
+   Note.findById(id)
       .then(res => {
          if (res) response.json(res);
          else response.status(400).send({"No_Found": 'No matches found'});
@@ -169,7 +170,7 @@ app.post('/notes', (request, response) => {
       return
    }
 
-   Notes.create({
+   Note.create({
       content: note.content,
       date: new Date(),
       important: note.important,
@@ -185,20 +186,30 @@ app.put('/notes/:id', (request, response) => {
    const { id } = request.params;
    const note = request.body;
 
-   Notes.findByIdAndUpdate(id, note, {returnDocument: 'after'}).then(res => {
+   Note.findByIdAndUpdate(id, note, {returnDocument: 'after'}).then(res => {
       response.json({updatedDocument: res, status: 200, statusMessage: 'OK'});
    });
 });
 
-app.delete('/notes/:id', (request, response, next) => {
+app.delete('/notes/:id', async (request, response, next) => {
    const { id } = request.params;
-   Notes.findByIdAndRemove(id)
+   Note.findByIdAndRemove(id)
       .then(res => {
          response.status(200).json({deletedDocument: res, status: 200, statusMessage: 'OK'});
       })
       .catch(error => {
          next(error);
-      })
+      });
+
+   /* SAME */
+
+   try {
+      const note = await Note.findByIdAndRemove(id)
+      response.status(200).json({fds: 'blablabla'})
+   }
+   catch (e) {
+      next(e)
+   }
 });
 
 app.get("/debug-sentry", (req, res) => {

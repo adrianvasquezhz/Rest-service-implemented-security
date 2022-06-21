@@ -55,6 +55,6 @@ noteSchema.set('toObject', {
 
 
 /* (COLLECTION) */
-const Notes = mongoose.model('myNotes', noteSchema);
+const Note = mongoose.model('myNotes', noteSchema);
 
-module.exports = Notes;
+module.exports = Note;

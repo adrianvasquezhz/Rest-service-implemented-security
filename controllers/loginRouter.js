@@ -4,7 +4,6 @@ const { SECRET_KEY } = process.env
 
 const User = require('../models/User');
 
-
 router.post('/', (request, response) => {
 
    const { username, password } = request.body;
