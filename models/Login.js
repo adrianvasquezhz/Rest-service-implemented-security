@@ -1,30 +1,31 @@
 const mongoose = require('mongoose')
 
-const userSchema = new mongoose.Schema({
-   Nombres: String,
-   Edad: {
+const loginSchema = new mongoose.Schema({
+   Usuario: {
       type: String,
-      min: [18, "Debes ser de al menos 18, no {VALUE}"],
-      max: [50, "Debes ser no mas de 50, no {VALUE}"],
+      unique: true,
+      required: true
    },
-   Email: String,
-   Direccion: String
+   Password: {
+      type: String,
+      unique: String
+   }
 });
 
 // instace methods (documents)
-userSchema.method('show', function() {
+loginSchema.method('show', function() {
    const msg = this.content + ' is ' + this.important;
    console.log(msg);
 });
 
-userSchema.set('toJSON', {
+loginSchema.set('toJSON', {
    transform: function(doc, returnObj) { 
       const {__v, _id, ...rest} = returnObj;
       return {id: _id, ...rest}
    }
 });
 
-userSchema.set('toObject', {
+loginSchema.set('toObject', {
    transform: function(doc, returnObj) {
       const {__v, _id, ...rest} = returnObj;
       return {id: _id, ...rest}
@@ -32,6 +33,6 @@ userSchema.set('toObject', {
 });
 
 /* (COLLECTION) */
-const User = mongoose.model('User', userSchema);
+const Login = mongoose.model('Login', loginSchema);
 
-module.exports = { User };
+module.exports = { Login };

@@ -1,35 +1,28 @@
-require('colors');
 require('dotenv').config();
-const { PORT } = process.env;
+
+const path = require('path')
+const colors = require('colors');
+colors.enable();
+const {PORT } = process.env;
+const mongoose = require('./mongoose');
 
 const express = require('express');
 const app = express();
+const usersRouter = require('./controllers/usersRouter');
 
-const { sequelize, runMigrations } = require('./util/sequelize.js');
-const { handleErrors } = require('./middlewares/errorMiddlewares')
-const userRouter = require('./controllers/usersRouter');
-const pruebaRouter = require('./controllers/notesRouter');
-const loginRouter = require('./controllers/loginRouter');
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
+
+app.get('/images/:image', (request, response) => {
+   const { image } = request.params
+   response.sendFile(path.resolve(__dirname, 'images', image ));
+});
+
+app.use('/users', usersRouter);
 
 
-app.use('/users', userRouter);
-app.use('/notes', pruebaRouter);
-app.use('/login', loginRouter)
-app.use(handleErrors)
-
-
-// sequelize.sync({alter: true}).then(() => {
-   app.listen(PORT, () => {
-      console.log('Server listening PORT 3050 and all table were synchronized successfully!'.yellow.underline);
-   })
-// })
-
-
-
-// Promise.all(
-//    [sequelize.sync(), app.listen(PORT)]
-// ).then((res) => {
-//    console.log('Server listening PORT 3050 and all table were synchronized successfully!'.yellow.underline)
-// })
+app.listen(PORT, () => {
+   console.log(`Listening PORT: ${PORT}`.yellow);
+});
