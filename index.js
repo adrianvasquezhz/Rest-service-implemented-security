@@ -3,7 +3,7 @@ require('dotenv').config();
 const path = require('path')
 const colors = require('colors');
 colors.enable();
-const {PORT } = process.env;
+const { PORT } = process.env;
 const mongoose = require('./mongoose');
 
 const express = require('express');
